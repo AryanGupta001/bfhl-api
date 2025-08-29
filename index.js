@@ -4,7 +4,7 @@ const app = express();
 app.use(express.json());
 
 const FULL_NAME = "john_doe";
-const DOB = "17091999"; // ddmmyyyy
+const DOB = "17091999"; 
 const EMAIL = "john@xyz.com";
 const ROLL_NUMBER = "ABCD123";
 
@@ -17,12 +17,41 @@ function alternateCaps(str) {
 
 app.post("/bfhl", (req, res) => {
   try {
+    if (!req.body || typeof req.body !== "object") {
+      return res.status(400).json({
+        is_success: false,
+        message: "Invalid request body. Expecting JSON object."
+      });
+    }
+
     const { data } = req.body;
+
+    if (!data) {
+      return res.status(400).json({
+        is_success: false,
+        message: "Missing 'data' key in request."
+      });
+    }
 
     if (!Array.isArray(data)) {
       return res.status(400).json({
         is_success: false,
-        message: "'data' must be an array",
+        message: "'data' must be an array."
+      });
+    }
+
+    if (data.length === 0) {
+      return res.status(200).json({
+        is_success: true,
+        user_id: `${FULL_NAME}_${DOB}`,
+        email: EMAIL,
+        roll_number: ROLL_NUMBER,
+        odd_numbers: [],
+        even_numbers: [],
+        alphabets: [],
+        special_characters: [],
+        sum: "0",
+        concat_string: ""
       });
     }
 
@@ -38,8 +67,9 @@ app.post("/bfhl", (req, res) => {
         return;
       }
 
+  
       if (/^-?\d+$/.test(item)) {
-        let num = BigInt(item);
+        let num = BigInt(item);  
         sum += num;
 
         if (num % BigInt(2) === BigInt(0)) {
@@ -47,12 +77,17 @@ app.post("/bfhl", (req, res) => {
         } else {
           odd_numbers.push(item);
         }
+
       } else if (/^[a-zA-Z]+$/.test(item)) {
+    
         alphabets.push(item.toUpperCase());
+
       } else {
+    
         special_characters.push(item);
       }
     });
+
 
     const concat_string = alternateCaps(
       alphabets.join("").split("").reverse().join("")
