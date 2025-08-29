@@ -14,7 +14,13 @@ function alternateCaps(str) {
     .map((ch, i) => (i % 2 === 0 ? ch.toUpperCase() : ch.toLowerCase()))
     .join("");
 }
-
+app.get("/", (req, res) => {
+  res.json({
+    status: "success",
+    message: "Backend is up and running",
+    endpoints: ["/bfhl"]
+  });
+});
 app.post("/bfhl", (req, res) => {
   try {
     if (!req.body || typeof req.body !== "object") {
